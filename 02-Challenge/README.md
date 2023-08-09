@@ -160,8 +160,8 @@ This will not be a model, but rather will be used as the `reaction` field's subd
 * `PUT` to update a user by its `_id`
 
 * `DELETE` to remove user by its `_id`
-
-**BONUS**: Remove a user's associated thoughts when deleted.
+.
+**BONUS**: Remove a user's associated thoughts when deleted
 
 ---
 
