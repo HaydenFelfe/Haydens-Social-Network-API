@@ -1,5 +1,5 @@
-const { ObjectId } = require("mongoose");
-const { Thought } = require("../models");
+const { ObjectId } = require("mongoose").Types;
+const { Thought, User } = require("../models");
 
 module.exports = {
   async allThoughts(req, res) {
@@ -13,15 +13,20 @@ module.exports = {
 
   async getSingleThought(req, res) {
     try {
+      console.log('Fetching single thought...');
+      
       const thought = await Thought.findOne({
-        _id: ObjectId(req.params.thoughtId),
+        _id: new ObjectId(req.params.thoughtId),
       });
-
+  
+      console.log('Thought:', thought);
+  
       if (!thought) {
-        return res.stastus(404).json({ message: "Thought not found!" });
+        return res.status(404).json({ message: 'Thought not found!' });
       }
       return res.json({ thought });
     } catch (err) {
+      console.error('Error:', err);
       res.status(500).json(err);
     }
   },
@@ -41,9 +46,13 @@ module.exports = {
       if (!user) {
         res.status(404).json({ message: "User not found!" });
       }
-      return res.json({ message: "Thought created successfully" });
+      return res.json({ 
+        message: "Thought created successfully",
+        thoughtId: thought._id,
+        thoughtText: thought.thoughtText,
+     });
     } catch (err) {
-      res.stastus(500).json(err);
+      res.status(500).json(err);
     }
   },
 

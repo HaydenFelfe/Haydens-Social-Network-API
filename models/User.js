@@ -36,11 +36,14 @@ const userSchema = new Schema(
 }
 );
 
-userSchema
-    .virtual('friendCount')
-    .get(function () {
-        return this.friends.length;
-    });
+userSchema.virtual('friendCount').get(function () {
+    console.log('Calculating friendCount');
+    if (!this.friends) {
+        console.log('No friends array found');
+        return 0;
+    }
+    return this.friends.length;
+});
 
 const User = model('user', userSchema);
 module.exports = User;
