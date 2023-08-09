@@ -14,7 +14,7 @@ module.exports = {
 
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: ObjectId(req.params.userId) })
+      const user = await User.findOne({ _id: new ObjectId(req.params.userId) })
         .populate("thoughts")
         .populate("friends", "_id username");
 
@@ -43,7 +43,7 @@ module.exports = {
   async updateUser(req, res) {
     try {
       const updateUser = await User.findOneAndUpdate(
-        { _id: req.params.ObjectId },
+        { _id: req.params.userId },
         { $set: req.body },
         { runValidators: true, new: true }
       );
@@ -56,11 +56,12 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
+  
 
   async deleteUser(req, res) {
     try {
       const deleteUser = await User.findOneAndDelete({
-        _id: req.params.ObjectId,
+        _id: req.params.userId,
       });
 
       if (!deleteUser) {

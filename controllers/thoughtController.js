@@ -77,4 +77,47 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  async createReaction(req, res) {
+    try {
+      const { reactionBody, username } = req.body;
+      const thoughtId = req.params.thoughtId;
+      const newReaction = { reactionBody, username };
+
+      const thought = await Thought.findOneAndUpdate(
+        { _id: thoughtId },
+        { $push: { reactions: newReaction } },
+        { new: true }
+      );
+
+      if (!thought) {
+        res.status(404).json({ message: "Thought not found!" });
+      }
+
+      return res.json(thought);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  async deleteReaction(req, res) {
+    try {
+      const thoughtId = req.params.thoughtId;
+      const reactionId = req.params.reactionId;
+
+      const thought = await Thought.findOneAndUpdate(
+        { _id: thoughtId },
+        { $pull: { reactions: { reactionId } } },
+        { new: true }
+      );
+
+      if (!thought) {
+        return res.status(404).json({ message: "Thought not found!" });
+      }
+
+      res.json(thought);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
 };
