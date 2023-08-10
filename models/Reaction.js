@@ -27,7 +27,7 @@ const reactionSchema = new Schema(
   }
 );
 reactionSchema.virtual("reactionCreatedAt").get(function () {
-  return this.createdAt.toLocalDateString();
+  return this.createdAt.toLocaleDateString();
 });
 
 module.exports = reactionSchema;

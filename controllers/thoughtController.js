@@ -13,20 +13,16 @@ module.exports = {
 
   async getSingleThought(req, res) {
     try {
-      console.log('Fetching single thought...');
-      
       const thought = await Thought.findOne({
         _id: new ObjectId(req.params.thoughtId),
       });
-  
-      console.log('Thought:', thought);
-  
+
       if (!thought) {
-        return res.status(404).json({ message: 'Thought not found!' });
+        return res.status(404).json({ message: "Thought not found!" });
       }
       return res.json({ thought });
     } catch (err) {
-      console.error('Error:', err);
+      console.error("Error:", err);
       res.status(500).json(err);
     }
   },
@@ -46,11 +42,11 @@ module.exports = {
       if (!user) {
         res.status(404).json({ message: "User not found!" });
       }
-      return res.json({ 
+      return res.json({
         message: "Thought created successfully",
         thoughtId: thought._id,
         thoughtText: thought.thoughtText,
-     });
+      });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -59,7 +55,7 @@ module.exports = {
   async updateThought(req, res) {
     try {
       const updateThought = await Thought.findOneAndUpdate(
-        { _id: req.params.ObjectId },
+        { _id: req.params.thoughtId },
         { $set: req.body },
         { runValidators: true, new: true }
       );
@@ -75,7 +71,7 @@ module.exports = {
   async deleteThought(req, res) {
     try {
       const deleteThought = await Thought.findOneAndDelete({
-        _id: req.params.ObjectId,
+        _id: req.params.thoughtId,
       });
 
       if (!deleteThought) {
@@ -91,7 +87,15 @@ module.exports = {
     try {
       const { reactionBody, username } = req.body;
       const thoughtId = req.params.thoughtId;
+      console.log(
+        "Received request with reactionBody:",
+        reactionBody,
+        "and username:",
+        username
+      );
+
       const newReaction = { reactionBody, username };
+      console.log("Creating new reaction:", newReaction);
 
       const thought = await Thought.findOneAndUpdate(
         { _id: thoughtId },
@@ -100,11 +104,14 @@ module.exports = {
       );
 
       if (!thought) {
-        res.status(404).json({ message: "Thought not found!" });
+        console.log("Thought not found");
+        return res.status(404).json({ message: "Thought not found!" });
       }
 
+      console.log("Successfully updated thought with new reaction:", thought);
       return res.json(thought);
     } catch (err) {
+      console.error("Error:", err);
       res.status(500).json(err);
     }
   },
@@ -114,8 +121,8 @@ module.exports = {
       const thoughtId = req.params.thoughtId;
       const reactionId = req.params.reactionId;
 
-      const thought = await Thought.findOneAndUpdate(
-        { _id: thoughtId },
+      const thought = await Thought.findByIdAndUpdate(
+        thoughtId,
         { $pull: { reactions: { reactionId } } },
         { new: true }
       );
@@ -126,6 +133,7 @@ module.exports = {
 
       res.json(thought);
     } catch (err) {
+      console.error("Error:", err);
       res.status(500).json(err);
     }
   },
